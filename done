@@ -1,0 +1,132 @@
+@startuml
+
+entity "LANGUAGES" as LANGUAGES {
+    * id : INTEGER <<PK>>
+    --
+    name : VARCHAR
+    code : VARCHAR
+}
+
+entity "UNITS" as UNITS {
+    * id : INTEGER <<PK>>
+    --
+    language_id : INTEGER <<FK>>
+    title : VARCHAR
+    description : TEXT
+    position : INTEGER
+}
+
+entity "SKILLS" as SKILLS {
+    * id : INTEGER <<PK>>
+    --
+    unit_id : INTEGER <<FK>>
+    title : VARCHAR
+    description : TEXT
+    position : INTEGER
+    xp_reward : INTEGER
+}
+
+entity "LESSONS" as LESSONS {
+    * id : INTEGER <<PK>>
+    --
+    skill_id : INTEGER <<FK>>
+    title : VARCHAR
+    position : INTEGER
+    xp_reward : INTEGER
+}
+
+entity "EXERCISES" as EXERCISES {
+    * id : INTEGER <<PK>>
+    --
+    lesson_id : INTEGER <<FK>>
+    type : VARCHAR
+    question : TEXT
+    correct_answer : TEXT
+    options : TEXT
+    position : INTEGER
+}
+
+entity "USERS" as USERS {
+    * id : INTEGER <<PK>>
+    --
+    username : VARCHAR
+    email : VARCHAR
+    total_xp : INTEGER
+    streak_days : INTEGER
+    hearts : INTEGER
+    gems : INTEGER
+    daily_xp : INTEGER
+    last_activity_date : DATE
+    created_at : DATETIME
+}
+
+entity "USER_SKILL_PROGRESS" as USER_SKILL_PROGRESS {
+    * id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    skill_id : INTEGER <<FK>>
+    progress : INTEGER
+    crowns : INTEGER
+    completed : BOOLEAN
+    updated_at : DATETIME
+}
+
+entity "LESSON_ATTEMPTS" as LESSON_ATTEMPTS {
+    * id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    lesson_id : INTEGER <<FK>>
+    xp_earned : INTEGER
+    hearts_lost : INTEGER
+    completed : BOOLEAN
+    started_at : DATETIME
+    completed_at : DATETIME
+}
+
+entity "DAILY_ACTIVITY" as DAILY_ACTIVITY {
+    * id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    activity_date : DATE
+    xp_earned : INTEGER
+    lessons_completed : INTEGER
+}
+
+entity "ACHIEVEMENTS" as ACHIEVEMENTS {
+    * id : INTEGER <<PK>>
+    --
+    name : VARCHAR
+    description : TEXT
+    icon : VARCHAR
+    requirement : INTEGER
+}
+
+entity "USER_ACHIEVEMENTS" as USER_ACHIEVEMENTS {
+    * id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    achievement_id : INTEGER <<FK>>
+    unlocked_at : DATETIME
+}
+
+
+LANGUAGES ||--o{ UNITS : contains
+
+UNITS ||--o{ SKILLS : contains
+
+SKILLS ||--o{ LESSONS : contains
+
+LESSONS ||--o{ EXERCISES : contains
+
+USERS ||--o{ USER_SKILL_PROGRESS : has
+SKILLS ||--o{ USER_SKILL_PROGRESS : tracks
+
+USERS ||--o{ LESSON_ATTEMPTS : makes
+LESSONS ||--o{ LESSON_ATTEMPTS : has
+
+USERS ||--o{ DAILY_ACTIVITY : records
+
+USERS ||--o{ USER_ACHIEVEMENTS : earns
+ACHIEVEMENTS ||--o{ USER_ACHIEVEMENTS : contains
+
+@enduml
